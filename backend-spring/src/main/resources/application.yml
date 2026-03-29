@@ -1,0 +1,62 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: codesentinel-backend
+
+  datasource:
+    url: jdbc:h2:mem:codesentinel;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    default-property-inclusion: non_null
+
+# ── CodeSentinel Configuration ──────────────────────────────────
+codesentinel:
+  webhook:
+    secret: ${WEBHOOK_SECRET:codesentinel-dev-secret-change-in-prod}
+
+  ai-engine:
+    base-url: ${AI_ENGINE_URL:http://localhost:8000}
+    timeout-seconds: 60
+
+  github:
+    api-url: ${GITHUB_API_URL:https://api.github.com}
+    token: ${GITHUB_TOKEN:mock-token}
+
+  queue:
+    capacity: 100
+
+  async:
+    core-pool-size: 4
+    max-pool-size: 8
+    queue-capacity: 50
+
+# ── Logging ─────────────────────────────────────────────────────
+logging:
+  level:
+    root: INFO
+    com.codesentinel: DEBUG
+    org.springframework.web: INFO
+    org.hibernate.SQL: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"

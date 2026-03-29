@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeSentinel AI — Security Code Review Dashboard</title>
+    <meta name="description" content="AI-powered secure code review system with agentic AI workflow">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- ── Header ──────────────────────────────────────────────── -->
+    <header id="app-header">
+        <div class="header-content">
+            <div class="logo-group">
+                <div class="logo-icon">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                        <rect width="32" height="32" rx="8" fill="url(#logo-gradient)"/>
+                        <path d="M10 16L14 20L22 12" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <defs>
+                            <linearGradient id="logo-gradient" x1="0" y1="0" x2="32" y2="32">
+                                <stop stop-color="#6366f1"/>
+                                <stop offset="1" stop-color="#8b5cf6"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <h1>CodeSentinel <span class="accent">AI</span></h1>
+            </div>
+            <div class="header-meta">
+                <div class="status-pill" id="backend-status">
+                    <span class="status-dot"></span>
+                    <span>Backend</span>
+                </div>
+                <div class="status-pill" id="ai-status">
+                    <span class="status-dot"></span>
+                    <span>AI Engine</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main id="app-main">
+        <!-- ── Trigger Panel ──────────────────────────────────── -->
+        <section class="panel trigger-panel" id="trigger-panel">
+            <div class="panel-header">
+                <h2>🚀 Trigger Security Review</h2>
+                <p class="panel-subtitle">Simulate a PR webhook with sample vulnerable code</p>
+            </div>
+            <div class="trigger-controls">
+                <div class="input-group">
+                    <label for="repo-input">Repository</label>
+                    <input type="text" id="repo-input" value="demo-user/sample-repo" placeholder="owner/repo">
+                </div>
+                <div class="input-group">
+                    <label for="pr-input">PR Number</label>
+                    <input type="number" id="pr-input" value="42" placeholder="42">
+                </div>
+                <button id="trigger-btn" class="btn-primary" onclick="triggerReview()">
+                    <span class="btn-icon">▶</span>
+                    Run Security Review
+                </button>
+            </div>
+            <div id="trigger-status" class="trigger-status hidden"></div>
+        </section>
+
+        <!-- ── Pipeline Status ────────────────────────────────── -->
+        <section class="panel pipeline-panel" id="pipeline-panel">
+            <div class="panel-header">
+                <h2>⚡ Agent Pipeline</h2>
+            </div>
+            <div class="pipeline-steps" id="pipeline-steps">
+                <div class="pipeline-step" data-step="webhook">
+                    <div class="step-icon">📨</div>
+                    <div class="step-info">
+                        <div class="step-name">Webhook Received</div>
+                        <div class="step-status">Waiting</div>
+                    </div>
+                </div>
+                <div class="pipeline-connector"></div>
+                <div class="pipeline-step" data-step="static">
+                    <div class="step-icon">🔍</div>
+                    <div class="step-info">
+                        <div class="step-name">Static Analysis</div>
+                        <div class="step-status">Waiting</div>
+                    </div>
+                </div>
+                <div class="pipeline-connector"></div>
+                <div class="pipeline-step" data-step="ai-analyzer">
+                    <div class="step-icon">🧠</div>
+                    <div class="step-info">
+                        <div class="step-name">Code Analyzer Agent</div>
+                        <div class="step-status">Waiting</div>
+                    </div>
+                </div>
+                <div class="pipeline-connector"></div>
+                <div class="pipeline-step" data-step="security">
+                    <div class="step-icon">🛡️</div>
+                    <div class="step-info">
+                        <div class="step-name">Security Agent</div>
+                        <div class="step-status">Waiting</div>
+                    </div>
+                </div>
+                <div class="pipeline-connector"></div>
+                <div class="pipeline-step" data-step="fix">
+                    <div class="step-icon">🔧</div>
+                    <div class="step-info">
+                        <div class="step-name">Fix Generator</div>
+                        <div class="step-status">Waiting</div>
+                    </div>
+                </div>
+                <div class="pipeline-connector"></div>
+                <div class="pipeline-step" data-step="review">
+                    <div class="step-icon">✅</div>
+                    <div class="step-info">
+                        <div class="step-name">Final Reviewer</div>
+                        <div class="step-status">Waiting</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Results Dashboard ──────────────────────────────── -->
+        <section class="panel results-panel hidden" id="results-panel">
+            <div class="panel-header">
+                <h2>📊 Review Results</h2>
+                <div class="risk-badge" id="risk-badge">— / 100</div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid" id="stats-grid">
+                <div class="stat-card critical">
+                    <div class="stat-value" id="stat-critical">0</div>
+                    <div class="stat-label">Critical</div>
+                </div>
+                <div class="stat-card high">
+                    <div class="stat-value" id="stat-high">0</div>
+                    <div class="stat-label">High</div>
+                </div>
+                <div class="stat-card medium">
+                    <div class="stat-value" id="stat-medium">0</div>
+                    <div class="stat-label">Medium</div>
+                </div>
+                <div class="stat-card low">
+                    <div class="stat-value" id="stat-low">0</div>
+                    <div class="stat-label">Low</div>
+                </div>
+            </div>
+
+            <div class="source-breakdown">
+                <div class="source-item">
+                    <span class="source-dot static"></span>
+                    <span>Static Analysis: <strong id="stat-static">0</strong></span>
+                </div>
+                <div class="source-item">
+                    <span class="source-dot ai"></span>
+                    <span>AI Analysis: <strong id="stat-ai">0</strong></span>
+                </div>
+            </div>
+
+            <!-- Vulnerability Cards -->
+            <div class="vulns-list" id="vulns-list"></div>
+        </section>
+
+        <!-- ── PR Comment Preview ─────────────────────────────── -->
+        <section class="panel comment-panel hidden" id="comment-panel">
+            <div class="panel-header">
+                <h2>💬 Simulated PR Comment</h2>
+                <button class="btn-secondary" onclick="copyComment()">📋 Copy</button>
+            </div>
+            <div class="comment-preview" id="comment-preview"></div>
+        </section>
+    </main>
+
+    <!-- ── Footer ──────────────────────────────────────────────── -->
+    <footer id="app-footer">
+        <p>CodeSentinel AI — Agentic Security Review • LangGraph + Spring Boot</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
